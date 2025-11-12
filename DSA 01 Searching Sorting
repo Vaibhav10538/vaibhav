@@ -1,0 +1,522 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct name
+{
+    char firstname[10];
+    char lastname[12];
+};
+
+
+struct profile
+{
+    name student_name;
+    float CGPA;
+    int Roll_no;
+};
+
+
+class student_data
+{
+    private :
+
+        struct profile std_db[15]={"Priya", "Jadhav", 9.89, 9, "Abhijeet", "Ingle", 9.8, 6, "Kunal", "Bhosale", 9.54, 13, "Pratik", "Shinde", 9.12, 4, "Ayush", "Kale", 9.65, 3, "Kunal", "Kachare", 9.5, 5, "Sumit", "Inamdar", 9.01, 12, "Sanika", "Joshi", 9.2, 11, "Atharva", "Kakade", 9.8, 2, "Mrunal", "Pawar", 9.45, 7, "Kalyani", "Nimbalkar", 8.97, 15, "Tanmay", "Bhise", 8.85, 14, "Shruti", "Jagdale", 9.74, 1, "Neha", "Gore", 8.86, 10, "Akshay", "Kumbhar", 8.98, 8};
+        int n = 15;
+
+    public :
+
+        void view(int n)
+        {
+            cout<<"\n\n Student        Name                 CGPA        Roll\n   No.                                           No.\n--------------------------------------------------------------\n";
+            for (int i = 0; i <= n-1; i++)
+            {
+              cout<<"    "<<i+1<<".                      "<<std_db[i].student_name.firstname<<" "<<std_db[i].student_name.lastname;
+                cout<<"   ->>-  "<<std_db[i].CGPA<<"   ->>-  "<<std_db[i].Roll_no<<"\n\n";
+            }
+        }
+
+        void search_cgpa(float r)  //linear search on CGPA
+        {
+            cout<<"\n\n< Searching in CGPA using Linear Search...>\n-----------------------------------------------";
+            int t = 1;
+            for (int i = 0; i < n; i++)
+            {
+                if(std_db[i].CGPA == r)
+                {
+                    cout<<"\n\n#"<<t<<" Details of Student with CGPA "<<std_db[i].CGPA<<" -";
+                    cout<<"\n\n Student        Name                 CGPA        Roll\n    No.                                          No.\n--------------------------------------------------------------\n";
+                    cout<<"    "<<i+1<<".        "<<std_db[i].student_name.firstname<<" "<<std_db[i].student_name.lastname;
+                    cout<<"   ->>-  "<<std_db[i].CGPA<<"   ->>-  "<<std_db[i].Roll_no;
+                    cout<<"\n--------------------------------------------------------------";
+                    t++;
+                    continue;
+                }
+            }
+            if(t == 0)
+            {
+                cout<<"\n Student '"<<r<<"' not found or Input correct CGPA";
+            }
+        }
+
+        void sort_names(int n)  //insertion sort for sorting names
+        {
+            for (int k=n-1; k>0; k--)
+            {
+                struct profile temp = std_db[k];
+                int j = k-1;
+                while (j >= 0 && strcmp(temp.student_name.firstname, std_db[j].student_name.firstname) < 0)  //compares both the strings character by character
+                {
+                    std_db[j+1] = std_db[j];
+                    j = j-1;
+                }
+                std_db[j+1] = temp;
+            }
+        }
+
+        void sort_CGPA(int l, int k)  //sorting CGPA using quick sorting
+        {
+            int r = k-1;
+            if (l>=r) return;
+            int i=l;
+            int j=r+1;
+            struct profile prec;
+            int p = std_db[l].CGPA; //Select pivot element
+            prec = std_db[l]; //temporarily storing pivot record prec
+            while(1)
+            {
+                do{ i++; } while (std_db[i].CGPA < p && i <= r);
+                do{ j--; } while (std_db[j].CGPA > p && j >= l);
+                if(i >= j) break;
+                struct profile temp;
+                temp = std_db[j];
+                std_db[j] = std_db[i];
+                std_db[i] = temp;
+            }
+            std_db[l] = std_db[j];
+            std_db[j] = prec;
+            sort_CGPA(l,j); //left list
+            sort_CGPA(j+1,r); //right list
+            student_data :: view(10);
+        }
+
+        void sort_RollNo()  //sorting roll no. in ascending order using bubble sort
+        {
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n-1; j++)
+                {
+                    if((std_db[j].Roll_no) < (std_db[j+1].Roll_no)) //Swapping
+                    {
+                        struct profile temp;
+                        temp = std_db[j];
+                        std_db[j] = std_db[j+1];
+                        std_db[j+1] = temp;
+                    }
+                }
+            }
+            student_data :: view(n);
+        }
+
+        void search_name()
+        {
+            cout<<"\n Enter student name to be searched : ";
+            char search[10];
+            cin>>search;
+            cout<<"\n< Searching name using Binary Search...>";
+            int lower = 0, upper, mid;
+            upper = n - 1;
+            mid = (lower + upper)/2;
+            student_data :: sort_names(n);
+            while (lower <= upper)
+            {
+                if(strcmp(std_db[mid].student_name.firstname, search)<0)
+                {
+                    lower = mid + 1;
+                }
+                else if(strcmp(std_db[mid].student_name.firstname, search)==0)
+                {
+                    cout<<"\n\n# Details of Student with name "<<std_db[mid].student_name.firstname<<" -";
+                    cout<<"\n\n Student        Name                 CGPA        Roll\n    No.                                           No.\n--------------------------------------------------------------\n";
+                    cout<<"    1.        "<<std_db[mid].student_name.firstname<<" "<<std_db[mid].student_name.lastname;
+                    cout<<"   ->>-  "<<std_db[mid].CGPA<<"   ->>-  "<<std_db[mid].Roll_no;
+                    cout<<"\n--------------------------------------------------------------";
+                    break;
+                }
+                else
+                {
+                    upper = mid - 1;
+                    mid = (lower + upper)/2;
+                }
+            }
+            if(lower > upper)
+            {
+                cout<<"\n Student '"<<search<<"' details not found or Input correct name";
+            }
+        }
+};
+
+
+int main()
+{
+    struct profile std_db[15]={"Priya", "Jadhav", 9.89, 9, "Abhijeet", "Ingle", 9.8, 6, "Kunal", "Bhosale", 9.54, 13, "Pratik", "Shinde", 9.12, 4, "Ayush", "Kale", 9.65, 3, "Kunal", "Kachare", 9.5, 5, "Sumit", "Inamdar", 9.01, 12, "Sanika", "Joshi", 9.2, 11, "Atharva", "Kakade", 9.8, 2, "Mrunal", "Pawar", 9.45, 7, "Kalyani", "Nimbalkar", 8.97, 15, "Tanmay", "Bhise", 8.85, 14, "Shruti", "Jagdale", 9.74, 1, "Neha", "Gore", 8.86, 10, "Akshay", "Kumbhar", 8.98, 8};
+    student_data std;     // object creation
+    cout<<"--------------------------------------------------------------------\n\t\t----- SE IT Student Database -----\n--------------------------------------------------------------------\n";
+    std.view(15);
+    char stopApp;
+    stopApp = 'Y','y';
+   // while(stopApp == 'Y')
+    do
+    {
+        cout<<"\n\nSelect action from following : \n";
+        cout<<"> 1. VIEW RECORDS\n> 2. SORT ROLL NO.(Using Bubble sort)\n> 3. SORT NAME(insertion sort)\n> 4. SORT CGPA(Toppers)\n> 5. SEARCH CGPA\n> 6. SEARCH NAME\n> 7. EXIT\n Enter choice (1/2/3/4/5/6/7): ";
+        int choice;
+        cin>>choice;
+        switch(choice)
+        {
+            case 1:
+                std.view(15);
+                break;
+
+            case 2:
+             cout<<"\n< Sorting Roll No. wise using Bubble Sort...>";
+                std.sort_RollNo();
+                break;
+
+            case 3:
+            cout<<"\n< Sorting name alphabetically using Insertion Sort...>";
+                std.sort_names(15);
+                std.view(15);
+                break;
+
+            case 4:
+             cout<<"\n< Sorting top 10 CGPA using Quick Sort...>";
+                std.sort_CGPA(0, 10);
+                break;
+
+            case 5:
+            cout<<"\n Enter Student CGPA to be searched : ";
+                float r;
+                cin>>r;
+                std.search_cgpa(r);
+                break;
+
+            case 6:
+             std.search_name();
+                break;
+
+            case 7:
+             cout<<" >Exited successful<\n --| END OF CODE |--";
+                return 0;
+
+            default :
+                cout<<"\n Invalid choice !";
+        }
+        cout<<"\n\nDo you want to continue (Y/N) ? : ";
+        cin>>stopApp;
+        if (stopApp == 'N' | 'n')
+        {
+           continue;
+
+        }
+        else exit;
+    }while(toupper(stopApp) == 'Y');
+
+}
+
+
+Output:
+--------------------------------------------------------------------
+		----- SE IT Student Database -----
+--------------------------------------------------------------------
+
+
+ Student        Name                 CGPA        Roll
+   No.                                           No.
+--------------------------------------------------------------
+    1.        Priya Jadhav   ->>-  9.89   ->>-  9
+
+    2.        Abhijeet Ingle   ->>-  9.8   ->>-  6
+
+    3.        Kunal Bhosale   ->>-  9.54   ->>-  13
+
+    4.        Pratik Shinde   ->>-  9.12   ->>-  4
+
+    5.        Ayush Kale   ->>-  9.65   ->>-  3
+
+    6.        Kunal Kachare   ->>-  9.5   ->>-  5
+
+    7.        Sumit Inamdar   ->>-  9.01   ->>-  12
+
+    8.        Sanika Joshi   ->>-  9.2   ->>-  11
+
+    9.        Atharva Kakade   ->>-  9.8   ->>-  2
+
+    10.        Mrunal Pawar   ->>-  9.45   ->>-  7
+
+    11.        Kalyani Nimbalkar   ->>-  8.97   ->>-  15
+
+    12.        Tanmay Bhise   ->>-  8.85   ->>-  14
+
+    13.        Shruti Jagdale   ->>-  9.74   ->>-  1
+
+    14.        Neha Gore   ->>-  8.86   ->>-  10
+
+    15.        Akshay Kumbhar   ->>-  8.98   ->>-  8
+
+
+
+Select action from following :
+> 1. VIEW RECORDS
+> 2. SORT ROLL NO.(Using Bubble sort)
+> 3. SORT NAME(insertion sort)
+> 4. SORT CGPA(Toppers)
+> 5. SEARCH CGPA
+> 6. SEARCH NAME
+> 7. EXIT
+ Enter choice (1/2/3/4/5/6/7): 1
+
+
+ Student        Name                 CGPA        Roll
+   No.                                           No.
+--------------------------------------------------------------
+    1.        Priya Jadhav   ->>-  9.89   ->>-  9
+
+    2.        Abhijeet Ingle   ->>-  9.8   ->>-  6
+
+    3.        Kunal Bhosale   ->>-  9.54   ->>-  13
+
+    4.        Pratik Shinde   ->>-  9.12   ->>-  4
+
+    5.        Ayush Kale   ->>-  9.65   ->>-  3
+
+    6.        Kunal Kachare   ->>-  9.5   ->>-  5
+
+    7.        Sumit Inamdar   ->>-  9.01   ->>-  12
+
+    8.        Sanika Joshi   ->>-  9.2   ->>-  11
+
+    9.        Atharva Kakade   ->>-  9.8   ->>-  2
+
+    10.        Mrunal Pawar   ->>-  9.45   ->>-  7
+
+    11.        Kalyani Nimbalkar   ->>-  8.97   ->>-  15
+
+    12.        Tanmay Bhise   ->>-  8.85   ->>-  14
+
+    13.        Shruti Jagdale   ->>-  9.74   ->>-  1
+
+    14.        Neha Gore   ->>-  8.86   ->>-  10
+
+    15.        Akshay Kumbhar   ->>-  8.98   ->>-  8
+
+
+
+Do you want to continue (Y/N) ? : y
+
+
+Select action from following :
+> 1. VIEW RECORDS
+> 2. SORT ROLL NO.(Using Bubble sort)
+> 3. SORT NAME(insertion sort)
+> 4. SORT CGPA(Toppers)
+> 5. SEARCH CGPA
+> 6. SEARCH NAME
+> 7. EXIT
+ Enter choice (1/2/3/4/5/6/7): 2
+
+< Sorting Roll No. wise using Bubble Sort...>
+
+ Student        Name                 CGPA        Roll
+   No.                                           No.
+--------------------------------------------------------------
+    1.        Kalyani Nimbalkar   ->>-  8.97   ->>-  15
+
+    2.        Tanmay Bhise   ->>-  8.85   ->>-  14
+
+    3.        Kunal Bhosale   ->>-  9.54   ->>-  13
+
+    4.        Sumit Inamdar   ->>-  9.01   ->>-  12
+
+    5.        Sanika Joshi   ->>-  9.2   ->>-  11
+
+    6.        Neha Gore   ->>-  8.86   ->>-  10
+
+    7.        Priya Jadhav   ->>-  9.89   ->>-  9
+
+    8.        Akshay Kumbhar   ->>-  8.98   ->>-  8
+
+    9.        Mrunal Pawar   ->>-  9.45   ->>-  7
+
+    10.        Abhijeet Ingle   ->>-  9.8   ->>-  6
+
+    11.        Kunal Kachare   ->>-  9.5   ->>-  5
+
+    12.        Pratik Shinde   ->>-  9.12   ->>-  4
+
+    13.        Ayush Kale   ->>-  9.65   ->>-  3
+
+    14.        Atharva Kakade   ->>-  9.8   ->>-  2
+
+    15.        Shruti Jagdale   ->>-  9.74   ->>-  1
+
+
+
+Do you want to continue (Y/N) ? : y
+
+
+Select action from following :
+> 1. VIEW RECORDS
+> 2. SORT ROLL NO.(Using Bubble sort)
+> 3. SORT NAME(insertion sort)
+> 4. SORT CGPA(Toppers)
+> 5. SEARCH CGPA
+> 6. SEARCH NAME
+> 7. EXIT
+ Enter choice (1/2/3/4/5/6/7): 3
+
+< Sorting name alphabetically using Insertion Sort...>
+
+ Student        Name                 CGPA        Roll
+   No.                                           No.
+--------------------------------------------------------------
+    1.        Abhijeet Ingle   ->>-  9.8   ->>-  6
+
+    2.        Akshay Kumbhar   ->>-  8.98   ->>-  8
+
+    3.        Atharva Kakade   ->>-  9.8   ->>-  2
+
+    4.        Ayush Kale   ->>-  9.65   ->>-  3
+
+    5.        Kalyani Nimbalkar   ->>-  8.97   ->>-  15
+
+    6.       Kunal Bhosale   ->>-  9.54   ->>-  13
+
+    7.        Kunal Kachare   ->>-  9.5   ->>-  5 
+
+    8.        Mrunal Pawar   ->>-  9.45   ->>-  7
+
+    9.        Neha Gore   ->>-  8.86   ->>-  10
+
+    10.       Pratik Shinde   ->>-  9.12   ->>-  4
+
+    11.       Priya Jadhav   ->>-  9.89   ->>-  9
+
+    12.       Sanika Joshi   ->>-  9.2   ->>-  11
+
+    13.       Shruti Jagdale   ->>-  9.74   ->>-  1
+
+    14.       Sumit Inamdar   ->>-  9.01   ->>-  12
+
+    15.       Tanmay Bhise   ->>-  8.85   ->>-  14
+
+
+
+Do you want to continue (Y/N) ? : y
+
+
+Select action from following :
+> 1. VIEW RECORDS
+> 2. SORT ROLL NO.(Using Bubble sort)
+> 3. SORT NAME(insertion sort)
+> 4. SORT CGPA(Toppers)
+> 5. SEARCH CGPA
+> 6. SEARCH NAME
+> 7. EXIT
+ Enter choice (1/2/3/4/5/6/7): 4
+
+< Sorting top 10 CGPA using Quick Sort...>
+
+ Student        Name                 CGPA        Roll
+   No.                                           No.
+--------------------------------------------------------------
+    1.        Priya Jadhav   ->>-  9.89   ->>-  9
+
+    2.        Abhijeet Ingle   ->>-  9.8   ->>-  6 
+
+    3.        Kunal Bhosale   ->>-  9.54   ->>-  13 
+
+    4.        Mrunal Pawar   ->>-  9.45   ->>-  7 
+
+    5.        Sanika Joshi   ->>-  9.2   ->>-  11
+
+    6.        Sumit Inamdar   ->>-  9.01   ->>-  12
+
+    7.       Akshay Kumbhar   ->>-  8.98   ->>-  8
+
+    8.       Kalyani Nimbalkar   ->>-  8.97   ->>-  15
+
+    9.        Neha Gore   ->>-  8.86   ->>-  10
+
+    10.       Tanmay Bhise   ->>-  8.85   ->>-  14
+
+
+
+
+Do you want to continue (Y/N) ? : y
+
+
+Select action from following :
+> 1. VIEW RECORDS
+> 2. SORT ROLL NO.(Using Bubble sort)
+> 3. SORT NAME(insertion sort)
+> 4. SORT CGPA(Toppers)
+> 5. SEARCH CGPA
+> 6. SEARCH NAME
+> 7. EXIT
+ Enter choice (1/2/3/4/5/6/7): 5
+
+ Enter Student CGPA to be searched : 9.89
+
+
+< Searching in CGPA using Linear Search...>
+-----------------------------------------------
+
+#1 Details of Student with CGPA 9.89 -
+
+ Student        Name                 CGPA        Roll
+    No.                                          No.
+--------------------------------------------------------------
+    9.        Priya Jadhav   ->>-  9.89   ->>-  9
+--------------------------------------------------------------
+
+Do you want to continue (Y/N) ? : y
+
+
+Select action from following :
+> 1. VIEW RECORDS
+> 2. SORT ROLL NO.(Using Bubble sort)
+> 3. SORT NAME(insertion sort)
+> 4. SORT CGPA(Toppers)
+> 5. SEARCH CGPA
+> 6. SEARCH NAME
+> 7. EXIT
+ Enter choice (1/2/3/4/5/6/7): 6
+
+ Enter student name to be searched : Priya Jadhav
+
+< Searching name using Binary Search...>
+
+# Details of Student with name Priya -
+
+ Student        Name                 CGPA        Roll
+--------------------------------------------------------------
+    1.        Priya Jadhav   ->>-  9.89   ->>-  9
+--------------------------------------------------------------
+
+Do you want to continue (Y/N) ? : y
+
+
+Select action from following :
+> 1. VIEW RECORDS
+> 2. SORT ROLL NO.(Using Bubble sort)
+> 3. SORT NAME(insertion sort)
+> 4. SORT CGPA(Toppers)
+> 5. SEARCH CGPA
+> 6. SEARCH NAME
+> 7. EXIT
+ Enter choice (1/2/3/4/5/6/7): 7
+ >Exited successful<
+ --| END OF CODE |--
+
+
+
+
